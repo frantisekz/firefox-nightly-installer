@@ -59,6 +59,3 @@ chmod +x "$file".desktop
 echo "done, now copying the launcher to the system level" 
 sudo cp "$file".desktop /usr/share/applications
 #cd ~
-
-
-
