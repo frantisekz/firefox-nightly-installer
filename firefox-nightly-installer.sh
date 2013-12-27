@@ -1,61 +1,36 @@
 #!/bin/bash
 
-file="firefox-280a1"
-ver="firefox-28.0a1.es-AR.linux-x86_64.tar.bz2"
-#path="$HOME/.software-firefox-280a1/"
+ver="29" #TODO : autodetection of latest version
+arch=$(uname -m)
+user=$(whoami)
+file="Nightly.desktop"
 
+mkdir $HOME/.tmp-install/
+cd $HOME/.tmp-install/
+echo "Downloading firefox nightly..."
+wget http://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/latest-trunk/firefox-"$ver".0a1.en-US.linux-"$arch".tar.bz2
+tar -xf firefox-"$ver".0a1.en-US.linux-"$arch".tar.bz2
 
-killall firefox
-mkdir -p $HOME/.tmp-install/
-cd ~/.tmp-install/
+sudo mkdir -p /opt/firefox/nightly
+sudo chown -R "$user" /opt/firefox/nightly #Fixes self-updating
+mv firefox/* /opt/firefox/nightly
+sudo ln -s /opt/firefox/nightly/firefox /usr/local/bin/nightly
 
+#Launcher
+	wget http://img.zatloukalu.eu/nightly.png -O $HOME/.mozilla/nightly.png
+	echo \[Desktop Entry\] >> "$file"
+	echo Type=Application >> "$file"
+	echo Terminal=false >> "$file"
+	echo "Categories=GNOME;GTK;Network;WebBrowser;"  >> "$file"
+	echo Name=nightly-"$file" >> "$file"
+	echo Icon=$HOME/.mozilla/nightly.png >> "$file"
+	echo Exec=nightly %u >> "$file"
 
-	if [ -f "$ver" ]; then
-			echo ""$ver" Detected! not downloading..."
-			tar -jxf "$ver"
-		else
-		echo "downloading firefox nightly:"
-		wget http://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/latest-mozilla-central-l10n/firefox-28.0a1.es-AR.linux-x86_64.tar.bz2
-		tar -jxf "$ver"
-		#rm "$ver"
-	fi
+chmod +x "$file"
 
-
-
-
-firefox -CreateProfile nightly-session
-
-mkdir -p $HOME/.software-"$file"/
-mv firefox/ $HOME/.software-"$file"/
-cd $HOME/.software-"$file"/firefox
-#icon
-		wget https://copy.com/tyCviHsLp7qq/Deer_park_globe.svg?download=1 -O $HOME/.software-firefox-280a1/firefox/Deer_park_globe.svg
-
-	if [ -f "$file".desktop ]; then
-			echo ""$file".Desktop Detected! Automatically erasing that stuff to create a new install..."
-			rm "$file".desktop
-			rm "$file".sh
-		else
-		echo "OK...no launcher found:"
-		echo "Creating a brand new one"
-	fi
-
-        echo ---------------------------------
-		echo \[Desktop Entry\] >> "$file".desktop
-		echo Type=Application >> "$file".desktop
-		echo Terminal=false >> "$file".desktop
-		echo "Categories=GNOME;GTK;Network;WebBrowser;"  >> "$file".desktop
-		echo Name=nightly-"$file" >> "$file".desktop
-		echo Icon=$HOME/.software-firefox-280a1/firefox/Deer_park_globe.svg >> "$file".desktop
-		echo Exec=sh $HOME/.software-firefox-280a1/firefox/"$file".sh >> "$file".desktop
-		echo "--------------------------------"
-
-echo "#!/bin/bash" >> "$file".sh
-echo "$HOME/.software-firefox-280a1/firefox/firefox -P nightly-session" >> "$file".sh
-		
-chmod +x "$file".sh
-chmod +x "$file".desktop
-
-echo "done, now copying the launcher to the system level" 
-sudo cp "$file".desktop /usr/share/applications
-#cd ~
+echo "Done, now copying the launcher to the system level" 
+sudo cp "$file" /usr/share/applications
+sudo cp "$file" $HOME/
+echo "Launcher is available in your home folder too"
+cd ..
+rm -R $HOME/.tmp-install/
