@@ -23,6 +23,7 @@ sudo ln -s /opt/firefox/nightly/firefox /usr/local/bin/nightly
 	echo Terminal=false >> "$file"
 	echo "Categories=GNOME;GTK;Network;WebBrowser;"  >> "$file"
 	echo Name=Firefox Nightly >> "$file"
+	echo Comment=The 100% fresh free-range ethical browser >> "$file"
 	echo Icon=$HOME/.mozilla/nightly.png >> "$file"
 	echo Exec=nightly %u >> "$file"
 
