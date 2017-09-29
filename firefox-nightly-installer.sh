@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ver="29" #TODO : autodetection of latest version
+ver="58"
 arch=$(uname -m)
 user=$(whoami)
 file="Nightly.desktop"
